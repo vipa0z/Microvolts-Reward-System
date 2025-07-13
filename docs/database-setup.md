@@ -20,9 +20,6 @@ CREATE TABLE valid_items (
 
 ---
 
-[Next: Configuration →](./configuration.md)
-
-
 To track user-specific reward data, the following fields are added to the `users` table:
 
 - `WheelSpinsClaimed` (INT, DEFAULT 0): Tracks the number of wheel spins a user has claimed.
@@ -42,3 +39,5 @@ To use this feature, simply start the server with the following command:
 ```bash
 node server.js --populate
 ```
+[Next: Configuration →](./configuration.md)
+

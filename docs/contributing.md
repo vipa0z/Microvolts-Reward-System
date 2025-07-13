@@ -2,7 +2,7 @@
 
 # Contributing
 
-Contributions to the Microvolts Win Galore project are highly welcome! As the project is in its early stages, there are many opportunities to make a significant impact.
+Contributions to this project are highly welcome! As the project is in its early stages, there are many opportunities to make a significant impact.
 
 ## Getting Started
 
@@ -17,9 +17,9 @@ If you're interested in contributing, please start by exploring the existing cod
 
 ## Call for a GUI Developer
 
-I am particularly looking for a developer to create a graphical user interface (GUI) for the server. This GUI would allow administrators to easily manage the reward systems, view server status, and configure settings without directly editing files or using the command line.
+I am particularly looking for Someone to create a graphical user interface (GUI) for the server. This GUI would allow Players and administrators to easily access or  manage the reward systems, view server status, and configure settings without directly editing files or using the command line.
 
-If you have experience with web development (e.g., React, Vue, Angular) and are interested in this role, please reach out. Your contribution would be invaluable to the project's success.
+If you have experience with web development (e.g., React, Vue, Angular) and are interested in this role, please reach out. Your contribution would be invaluable to the project.
 
 ---
 
