@@ -1,3 +1,5 @@
+![server init](./public/init.png)
+
 # Microvolts OverVolt: Rewards Server
 
 Welcome to the documentation for the Microvolts OverVolt rewards server. This project aims to bring back classic features from older versions of the game.
