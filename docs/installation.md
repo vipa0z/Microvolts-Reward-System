@@ -76,6 +76,6 @@ nodemon ./server.js
 - For more help, see the [Configuration](./configuration.md) and [Environment Variables](./environment-variables.md) docs.
 
 ---
-[[Next: Configuration](./configuration.md)]
+[Next: API Routes ->](https://github.com/vipa0z/Microvolts-Reward-System/blob/main/docs/API%20Routes.md)
  
-[Docs Home](./index.md)
+[Docs Home <-](./index.md)
