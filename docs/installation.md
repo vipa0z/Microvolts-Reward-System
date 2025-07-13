@@ -3,7 +3,7 @@
 # Installation Guide
 
 This document will help you set up and run the Microvolts OverVolt Rewards Server on your local machine or server environment.
-
+![server init](../public/init.png)
 ---
 
 ## Prerequisites
@@ -61,14 +61,11 @@ npm start
 
 For development with automatic restarts on file changes:
 
-install nodemon or alternatively use npm run dev
+run with node/nodemon
 ```
-npm i -g nodemon
+node ./server.js
 ```
-
-```
-nodemon ./server.js
-```
+![alt text](image.png)
 
 ## Troubleshooting
 - Make sure your database server is running and credentials are correct in `.env`.
