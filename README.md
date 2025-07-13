@@ -4,7 +4,7 @@ Welcome to the documentation for the Microvolts OverVolt rewards server. This pr
 
 ## Documentation
 
-All documentation has been moved to the `/docs` directory. Please refer to the following pages for detailed information:
+All documentation reside in the `/docs` directory. Please refer to the following pages for detailed information:
 
 - **[Introduction](./docs/index.md)**: Project overview and current status.
 - **[Database Setup](./docs/database-setup.md)**: Information on database schema changes and the `--populate` flag.
