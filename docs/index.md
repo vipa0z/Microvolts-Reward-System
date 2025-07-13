@@ -1,5 +1,7 @@
 [Docs Home](./index.md)
 
+[Installation Guide](./installation.md)
+
 # Microvolts Win Galore: Rewards Server
 
 This project is a Node.js-based rewards server for the game Microvolts. Its primary goal is to replicate and re-introduce popular features from older versions of the game and private servers that are no longer active, such as ToyHeroes Online. The server is designed to be extensible, allowing for the addition of new features over time.
@@ -19,4 +21,4 @@ The long-term vision for this project is to implement the following features:
 
 ---
 
-[Next: Database Setup →](./database-setup.md)
+[Next: Installation Guide →](./installation.md)
