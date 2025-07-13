@@ -7,11 +7,10 @@
 
 Contributions to this project are highly welcome! As the project is in its early stages, there are many opportunities to make a significant impact.
 -  I’m mainly looking for a frontend developer to build a  GUI that reimplements the MVS/THO features,  making them easily accessible to players and admins without editing files or using the command line. If you're passionate about bringing the old systems back to life and have experience with React, Vue, or similar, your contribution would mean a lot.
-
+feel free to reach out on Discord: vipa0z
 ---
 
 
-If you're interested in contributing or have questions, feel free to reach out on Discord: vipa0z
 
 
 
