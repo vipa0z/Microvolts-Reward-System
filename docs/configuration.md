@@ -1,3 +1,4 @@
+![conf](https://raw.githubusercontent.com/vipa0z/Microvolts-Reward-System/refs/heads/main/docs/image/configuration/1752544135130.png)
 # Configuration
 
 The server's reward systems are configured through JSON files located in the `configs/` directory. This makes it easy to add, remove, or modify rewards without changing the server's code.
