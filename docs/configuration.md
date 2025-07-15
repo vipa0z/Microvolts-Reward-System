@@ -1,4 +1,3 @@
-![conf](https://raw.githubusercontent.com/vipa0z/Microvolts-Reward-System/refs/heads/main/docs/image/configuration/1752544135130.png)
 # Configuration
 
 The server's reward systems are configured through JSON files located in the `configs/` directory. This makes it easy to add, remove, or modify rewards without changing the server's code.
@@ -26,6 +25,8 @@ Example `wheel_items.json`:
     ]
 }
 ```
+<img width="1460" height="424" alt="image" src="https://github.com/user-attachments/assets/89e456f3-bc0c-4ee7-b617-c88464892b87" />
+
 
 ### Configuration Validation
 
