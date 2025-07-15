@@ -56,7 +56,7 @@ exports.renderWheelPage = async (req, res) => {
     const wheel = new SpinningWheel(playerId);
 
     try {
-        
+           const eligibility = await wheel.checkEligibility();
         // Render the wheel page with eligibility information
         res.render('wheel', {
             success: true,
