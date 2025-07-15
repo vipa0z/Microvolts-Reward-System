@@ -13,7 +13,7 @@ This project is currently under active development. The initial feature, the **R
 The long-term vision for this project is to implement the following features:
 
 - **Referral Wheel** (✅ Implemented)
-- **Event Shop** (🔜 Planned)
+- **Event Shop** (🔜 In-Progress)
 - **Achievements** (🔜 Planned)
 - **Hourly Play Time Rewards** (🔜 Planned)
 
