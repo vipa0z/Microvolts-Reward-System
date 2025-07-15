@@ -9,6 +9,10 @@ While not fully implemented for all features, the architecture supports a config
 ### Manual Configuration
 
 You can also configure the rewards manually by editing the JSON files in the `configs/` directory. For example, to add items to the referral wheel, you would edit `configs/wheel_items.json`.
+if you were hosting on a seperate server you could copy the files using scp:
+```
+scp wheel_items.json user@server:<pathto-overvolt/configs>
+```
 
 Each configuration file should contain a JSON object with a key that matches the feature (e.g., `"wheel_items"`) and an array of item objects.
 
@@ -25,8 +29,16 @@ Example `wheel_items.json`:
     ]
 }
 ```
-<img width="1460" height="424" alt="image" src="https://github.com/user-attachments/assets/89e456f3-bc0c-4ee7-b617-c88464892b87" />
-
+response
+```
+{
+    "success": true,
+data: {
+    "message": "2 item(s) added to wheel_items and memory cache updated."
+     ii_id: [141414,242556]
+   }
+}
+```
 
 ### Configuration Validation
 
