@@ -16,6 +16,8 @@ The long-term vision for this project is to implement the following features:
 - **Event Shop** (🔜 In-Progress)
 - **Achievements** (🔜 Planned)
 - **Hourly Play Time Rewards** (🔜 Planned)
+- **GUI** (🔜 Planned)
+
 
 ---
 
