@@ -30,9 +30,9 @@ Example `wheel_items.json`:
 
 To ensure the integrity of the reward systems, the server automatically validates all configuration files in the `configs/` directory on startup. The validation process includes:
 
-1.  **File Existence**: If a configuration file is missing, the server will create it with a default empty structure.
-2.  **JSON Structure**: It checks if the file contains valid JSON and the expected root key (e.g., `"wheel_items"`).
-3.  **Item ID Validation**: It extracts all item IDs from the configuration file and checks them against the `valid_items` table in the database. If any invalid item IDs are found, a warning is logged to the console.
+1. **File Existence**: If a configuration file is missing, the server will create it with a default empty structure.
+2. **JSON Structure**: It checks if the file contains valid JSON and the expected root key (e.g., `"wheel_items"`).
+3. **Item ID Validation**: It extracts all item IDs from the configuration file and checks them against the `valid_items` table in the database. If any invalid item IDs are found, a warning is logged to the console.
 
 This validation process prevents server crashes due to misconfiguration and ensures that only valid items are available as rewards.
 

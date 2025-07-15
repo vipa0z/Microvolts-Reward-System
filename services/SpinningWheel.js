@@ -1,10 +1,8 @@
 const RewardService = require('./RewardService');
-const fs = require('fs').promises;
-const path = require('path');
-const db  = require('../util/db')
-const Player = require('./Player')
-
-
+const db = require('../util/db');
+const Player = require('./Player');
+const MemoryLoader = require('./MemoryLoader');
+const logger = require('../util/logger');
 
 class SpinningWheel {
     constructor(playerId) {
@@ -12,27 +10,8 @@ class SpinningWheel {
         this.requiredPlaytimeInSeconds = this.WHEEL_UNLOCK_PLAY_TIME * 3600; // converts hours to seconds
         this.playerId = playerId;
     }
-    async loadWheelItems() {
-        const configPath = path.join(__dirname, '..', 'configs', 'wheel_items.json');
-        try {
-            const raw = await fs.readFile(configPath, 'utf8');
-            if (!raw.trim()) return [];
-            const data = JSON.parse(raw);
-            if (Array.isArray(data.wheel_items)) {
-                return data.wheel_items;
-            }
-            return [];
-        } catch (err) {
-            // Optionally, log or auto-initialize here
-            return [];
-        }
-    }
 
-    async getItems() {
-        return await loadWheelItems();
-    }
-
-
+    // checks the players eligibility for a spin
     async checkEligibility() {
         const player = await Player.getPlayerById(this.playerId);
         
@@ -65,120 +44,115 @@ class SpinningWheel {
     }
 
 
-        //  updates the players spin count in the database
-    async consumeSpin() {
-        const player = await Player.getPlayerById(this.playerId);
 
-        if (!player) {
-            throw new Error("Player not found");
+    /**
+     * Consumes a spin by updating the player's spin count in the database
+     * @param {number} updatedClaimedWheelSpins - The new total of claimed spins
+     * @returns {Promise<Object>} - Database query result
+     */
+    async consumeSpin(updatedClaimedWheelSpins) {
+        try {
+            const rows = await db.query(
+                'UPDATE users SET WheelSpinsClaimed = ? WHERE AccountID = ? LIMIT 1',
+                [updatedClaimedWheelSpins, this.playerId]
+            );
+            logger.info(`Player ${this.playerId} consumed a wheel spin. Total claimed: ${updatedClaimedWheelSpins}`);
+            return rows;
+        } catch (error) {
+            logger.error(`Error consuming spin for player ${this.playerId}: ${error.message}`);
+            throw error;
         }
-        // Calculate new spin count
-        const newWheelSpinsClaimed = player.WheelSpinsClaimed + 1;
-
-        // Update the database with the new count
-        await SpinningWheel.updateWheelSpinsClaimed(this.playerId, newWheelSpinsClaimed);
-
-        return {
-            WheelSpinsClaimed: newWheelSpinsClaimed
-        };
     }
 
-        // updates the players spin count in the database
-    static async updateWheelSpinsClaimed(playerId, newWheelSpinsClaimed) {
-        const rows = await db.query(
-            'UPDATE users SET WheelSpinsClaimed = ? WHERE AccountID = ? LIMIT 1',
-            [newWheelSpinsClaimed, playerId]
-        );
-        return rows;
-    }
-
-
-        // randomly draws an item, replace with chances and pity system later on
-    drawWheel(items) {
+    /**
+     * Randomly draws an item from the wheel items
+     * @returns {Object} - The randomly selected reward item
+     */
+    drawWheel() {
+        // Get wheel items from memory
+        const items = MemoryLoader.getItems('wheel_items');
+        
         if (!items || items.length === 0) {
             throw new Error("No wheel items configured");
         }
 
+        // Select a random item from the wheel items
         const reward = items[Math.floor(Math.random() * items.length)];
+        logger.info(`Player ${this.playerId} drew reward: ${reward.ii_name}`);
         return reward;
     }
 
 
-    // calls the checkEligibility function, if true, calls consumeSpin and drawWheel
+    /**
+     * Process a wheel spin - checks eligibility, consumes a spin, draws a reward and sends it to player
+     * @returns {Promise<Object>} - Result of the spin operation
+     */
     async spin() {
         try {
             // Check if player is eligible to spin
             const eligibility = await this.checkEligibility();
-
+            
             if (!eligibility.canSpin) {
                 return {
                     success: false,
-                    error: eligibility.error || `You need ${eligibility.hoursUntilNextSpin} hours of play time before you can claim a spin`,
+                    error: `You need ${eligibility.hoursUntilNextSpin} more hours to claim a spin`,
                     hoursUntilNextSpin: eligibility.hoursUntilNextSpin,
-                    remainingSpins: eligibility.remainingSpins
-                };
-            }
-
-            // Consume the spin (this now updates the database)
-            await this.consumeSpin();
-                // already loaded in memory (working on it)
-                
-            // // Draw reward from wheel
-            // const wheelItems = await this.loadWheelItems();
-
-            const reward = await this.drawWheel(wheelItems);
-            console.log("DRAWN REWARD:", reward.itemName);
-
-            const rewardService = new RewardService(this.playerId);
-
-            // Give reward to player
-            try {
-                console.log("reward",reward)
-                if (reward.ii_id.length > 1) {
-                    await rewardService.sendMultipleRewardsToPlayerGiftBox(
-                        reward.ii_id,
-                        "Congratulations Microbolter! You won " + reward.itemName + " from The Spinning Wheel",
-                        "Spinning Wheel"
-                    );
-                } else {
-                    await rewardService.sendRewardToPlayerGiftBox(
-                        reward.itemId,
-                        "Congratulations Microbolter! You won " + reward.itemName + " from The Spinning Wheel",
-                        "Spinning Wheel"
-                    );
-                }
-            } catch (error) {
-                console.error("Error sending reward:", error);
-                return {
-                    success: false,
-                    error: "An error occurred while sending reward",
                     remainingSpins: 0
                 };
             }
-
-            // Get updated eligibility after consuming the spin
+        
+            // Consume the spin (updates the database)
+            await this.consumeSpin(eligibility.claimedSpins + 1);
+            
+            // Draw reward
+            const reward = this.drawWheel();
+            
+            // Send reward to player
+            await this.sendReward(reward);
+            
+            // Get updated eligibility
             const updatedEligibility = await this.checkEligibility();
 
             return {
                 success: true,
-                itemName: reward.itemName,
+                itemName: reward.ii_name,
                 remainingSpins: updatedEligibility.remainingSpins
             };
-
         } catch (error) {
-            console.error("Error during spin:", error);
+            logger.error(`Error during wheel spin for player ${this.playerId}: ${error.message}`);
             return {
                 success: false,
-                error: "An error occurred while spinning",
+                error: "An error occurred while processing your spin",
                 remainingSpins: 0
             };
         }
     }
-
-    // Static method to get wheel configuration
-    static getWheelItems() {
-        return items;
+    
+    /**
+     * Send the reward to the player's gift box
+     * @param {Object} reward - The reward item to send
+     * @returns {Promise<void>}
+     */
+    async sendReward(reward) {
+        const rewardService = new RewardService(this.playerId);
+        const message = `Congratulations Microbolter! You won ${reward.ii_name} from The Referal system, keep creating alts to abuse this even more--i mean inviting friends :].`;
+        
+        if (Array.isArray(reward.ii_id)) {
+            await rewardService.sendMultipleRewardsToPlayerGiftBox(
+                reward.ii_id,
+                message
+            );
+        } else { // send single item
+            await rewardService.sendRewardToPlayerGiftBox(
+                reward.ii_id,
+                `Congratulations Microbolter! You've just won ${reward.ii_name} as your referal The Spinning Wheel`
+            );
+        }
+        
+        logger.info(`Reward ${reward.ii_name} sent to player ${this.playerId}'s gift box`);
     }
-}
+
+    }
+
 
 module.exports = SpinningWheel;

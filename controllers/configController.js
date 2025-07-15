@@ -1,4 +1,6 @@
 const CATEGORY_CONFIGS = require('../services/ConfigValidator').CATEGORY_CONFIGS;
+const MemoryLoader = require('../services/MemoryLoader');
+const logger = require('../util/logger');
 // ✅ Function that takes category and returns an Express handler function
 exports.configureItems = function (category) {
     return async (req, res) => {
@@ -56,9 +58,18 @@ exports.configureItems = function (category) {
 
             await fs.writeFile(configPath, JSON.stringify(configData, null, 4), "utf8");
 
+            // Reload the category in memory to reflect the changes immediately
+            try {
+                await MemoryLoader.reloadCategory(configMeta.key);
+                logger.info(`[✓] Reloaded ${configMeta.key} in memory after configuration update`);
+            } catch (reloadErr) {
+                logger.error(`[!] Failed to reload ${configMeta.key} in memory: ${reloadErr.message}`);
+                // Continue with the response even if reload fails
+            }
+
             return res.status(200).json({
                 success: true,
-                message: `${cleanedItems.length} item(s) added to ${category}.`
+                message: `${cleanedItems.length} item(s) added to ${category} and memory cache updated.`
             });
 
         } catch (err) {

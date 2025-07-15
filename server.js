@@ -95,6 +95,12 @@ async function startServer() {
     for (const category of categories) {
         await ConfigValidator.validateConfigFileOnStartup(category);
     }
+    
+    // Load shop and wheel items into memory for faster access, achievements might be too large....
+    const MemoryLoader = require('./services/MemoryLoader');
+    await MemoryLoader.loadItemsIntoMemory('wheel_items');
+    await MemoryLoader.loadItemsIntoMemory('shop_items')
+
 
 
 
