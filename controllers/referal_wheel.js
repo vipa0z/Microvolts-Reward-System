@@ -1,6 +1,4 @@
 const SpinningWheel = require('../services/SpinningWheel')
-const RewardService = require('../services/RewardService')
-const ConfigValidator = require('../services/ConfigValidator');
 const logger = require('../util/logger')
 const chalk = require('chalk');
 // n// config wheel items

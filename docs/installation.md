@@ -3,7 +3,7 @@
 # Installation Guide
 
 This document will help you set up and run the Microvolts OverVolt Rewards Server on your local machine or server environment.
-![server init](../public/init.png)
+
 ---
 
 ## Prerequisites

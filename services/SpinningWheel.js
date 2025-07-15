@@ -32,18 +32,12 @@ class SpinningWheel {
         return await loadWheelItems();
     }
 
+
     async checkEligibility() {
         const player = await Player.getPlayerById(this.playerId);
-        if (!player) {
-            return {
-                canSpin: false,
-                error: "Player not found",
-                remainingSpins: 0,
+        
 
-            };
-        }
-
-        // Calculate total eligible spins based on playtime
+        // Calculate total eligible spins based on playtime, returns a canSpin boolean with either 0/1
         // playtime needed in seconds = 160 * 3600 = 576,000
         // if playtime / time needed = int -> reward with spin
         // 160/160 = 1, 320/160 = 2, 480/160 = 3...
@@ -60,36 +54,36 @@ class SpinningWheel {
             const playtimeNeeded = nextThresholdPlaytime - player.Playtime;
             hoursUntilNextSpin = Math.max(0, Math.ceil(playtimeNeeded / 3600));
         }
-
+                // returning useful data for making mathmatical decisions
         return {
-            canSpin: availableSpins > 0,
+            canSpin: availableSpins > 0,  // if 0, player can't spin if 1, player can spin :O
             remainingSpins: availableSpins,
             hoursUntilNextSpin: hoursUntilNextSpin,
-            totalEligibleSpins: totalEligibleSpins,
-            claimedSpins: player.WheelSpinsClaimed
+            totalEligibleSpins: totalEligibleSpins, // calculated amount of spins available
+            claimedSpins: player.WheelSpinsClaimed // amount of spins already claimed 
         };
     }
 
+
+        //  updates the players spin count in the database
     async consumeSpin() {
         const player = await Player.getPlayerById(this.playerId);
 
         if (!player) {
             throw new Error("Player not found");
         }
-
         // Calculate new spin count
         const newWheelSpinsClaimed = player.WheelSpinsClaimed + 1;
 
         // Update the database with the new count
         await SpinningWheel.updateWheelSpinsClaimed(this.playerId, newWheelSpinsClaimed);
 
-
         return {
             WheelSpinsClaimed: newWheelSpinsClaimed
         };
     }
 
-
+        // updates the players spin count in the database
     static async updateWheelSpinsClaimed(playerId, newWheelSpinsClaimed) {
         const rows = await db.query(
             'UPDATE users SET WheelSpinsClaimed = ? WHERE AccountID = ? LIMIT 1',
@@ -98,6 +92,8 @@ class SpinningWheel {
         return rows;
     }
 
+
+        // randomly draws an item, replace with chances and pity system later on
     drawWheel(items) {
         if (!items || items.length === 0) {
             throw new Error("No wheel items configured");
@@ -107,6 +103,8 @@ class SpinningWheel {
         return reward;
     }
 
+
+    // calls the checkEligibility function, if true, calls consumeSpin and drawWheel
     async spin() {
         try {
             // Check if player is eligible to spin
@@ -123,9 +121,11 @@ class SpinningWheel {
 
             // Consume the spin (this now updates the database)
             await this.consumeSpin();
+                // already loaded in memory (working on it)
+                
+            // // Draw reward from wheel
+            // const wheelItems = await this.loadWheelItems();
 
-            // Draw reward from wheel
-            const wheelItems = await this.loadWheelItems();
             const reward = await this.drawWheel(wheelItems);
             console.log("DRAWN REWARD:", reward.itemName);
 
