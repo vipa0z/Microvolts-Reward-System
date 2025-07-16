@@ -1,8 +1,6 @@
-![server init](./public/init.png)
-
 # Microvolts OverVolt: Rewards Server
 
-This project is a rewards server for the game Microvolts. Its primary goal is to replicate and re-introduce popular features from older versions of the game and private servers that are no longer active, such as ToyHeroes Online. The server is designed to be extensible, allowing for the addition of new features over time.
+A faithful recreation of the Microvolts rewards system, bringing back the functionality of  servers like Surge and THO. providing a complete recreation of the original game's reward mechanics.
 
 ## Compatibility
 
