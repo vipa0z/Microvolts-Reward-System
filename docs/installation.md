@@ -71,7 +71,7 @@ npm i nodemon -g
 ```
 
 ```
-node ./server.js
+nodemon ./server.js
 ```
 
 ## Troubleshooting
