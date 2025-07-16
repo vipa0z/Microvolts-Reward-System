@@ -10,7 +10,7 @@ exports.configureItems = function (category) {
                 return res.status(400).json({ error: `Unknown category: ${category}` });
             }
 
-            const items = req.body[configMeta.key]; // 👈 Dynamically pull correct key
+            const items = req.body[configMeta.key];
 
             if (!Array.isArray(items)) {
                 return res.status(400).json({ error: `Expected '${configMeta.key}' to be an array of objects.` });
@@ -24,6 +24,43 @@ exports.configureItems = function (category) {
                 if (typeof entry !== 'object' || entry === null) {
                     return res.status(400).json({ error: "Each item must be a non-null object." });
                 }
+                const requiredFields = ['itemId', 'itemName', 'itemOption'];
+                const entryKeys = Object.keys(entry);
+
+                // Missing required fields
+                const missing = requiredFields.filter(field => !(field in entry));
+                if (missing.length > 0) {
+                    return res.status(400).json({ error: `Missing required field(s): ${missing.join(', ')}` });
+                }
+
+                // Unknown fields
+                const unknown = entryKeys.filter(key => !requiredFields.includes(key));
+                if (unknown.length > 0) {
+                    return res.status(400).json({ error: `Unknown field(s): ${unknown.join(', ')}` });
+                }
+
+                // itemId: number or array of numbers
+                const itemId = entry.itemId;
+                if (
+                    !(
+                        (typeof itemId === 'number' && Number.isInteger(itemId)) ||
+                        (Array.isArray(itemId) && itemId.every(id => typeof id === 'number' && Number.isInteger(id)))
+                    )
+                ) {
+                    return res.status(400).json({ error: "itemId must be an integer or an array of integers." });
+                }
+
+                // Normalize
+                entry.itemId = Array.isArray(itemId) ? itemId : [itemId];
+
+                // itemName and itemOption
+                if (typeof entry.itemName !== 'string') {
+                    return res.status(400).json({ error: "itemName must be a string." });
+                }
+                if (typeof entry.itemOption !== 'string') {
+                    return res.status(400).json({ error: "itemOption must be a string." });
+                }
+
                 cleanedItems.push(entry);
             }
 
@@ -36,7 +73,8 @@ exports.configureItems = function (category) {
 
             if (!result.success) {
                 return res.status(400).json({
-                    error: "Invalid itemIds found",
+                    success: false,
+                    error: "Invalid itemIds, please check your input.",
                     invalidItemIds: result.invalidItemIds
                 });
             }
@@ -69,6 +107,10 @@ exports.configureItems = function (category) {
 
             return res.status(200).json({
                 success: true,
+                data: {
+                    category: configMeta.key,
+                    items: cleanedItems,
+                },
                 message: `${cleanedItems.length} item(s) added to ${category} and memory cache updated.`
             });
 

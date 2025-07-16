@@ -4,8 +4,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const chalk = require("chalk");
 const { CATEGORY_CONFIGS } = require('../util/categoryConfig');
-const MemoryLoader = require('./MemoryLoader');
-
+const { validateItemStructure } = require("../util/fieldValidator");
 
 // 🔍 Extract all ii_id(s) from items (handling nested arrays, objects, numbers)
 function extractItemIds(items) {
@@ -132,7 +131,16 @@ async function validateConfigFileOnStartup(category) {
         }
 
         items = items.map(item => Array.isArray(item) ? item[0] : item);
+        for (const item of items) {
+    const structureCheck = validateItemStructure(item);
+    if (!structureCheck.valid) {
+        logger.error(`[!] Field validation failed for an item in ${config.filename}: ${structureCheck.error}, \n[!] exiting....`);
+        process.exit(1);
+    }
 
+    // normalize itemId to array to match runtime behavior
+    item.itemId = Array.isArray(item.itemId) ? item.itemId : [item.itemId];
+}
         const result = await validateItems(category, items, { saveIfValid: false, fromFile: true });
 
         if (!result.success) {
