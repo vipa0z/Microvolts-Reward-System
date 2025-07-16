@@ -4,11 +4,10 @@ const express = require('express');
 const cors = require('cors');
 const db  = require('./util/db')
 const chalk = require('chalk');
-const { ensureValidItemsTableExist, ensureRewardFieldsExist, populateValidItems } = require('./util/updateDBHelpers')
+const {ensureRewardFieldsExist } = require('./util/updateDBHelpers')
 const ConfigValidator = require('./services/ConfigValidator')
-
-
-
+const MemoryLoader = require('./services/MemoryLoader');
+const run = require('./util/updateDBHelpers').run;
 // Import routes
 const authRoutes = require('./routes/routes');
 
@@ -81,29 +80,23 @@ async function startServer() {
     const args = process.argv.slice(2);
     if (args.includes('--populate')) {
       try {
+        run();
 
-    await ensureValidItemsTableExist()
-    await ensureRewardFieldsExist();
-
-   
-      await populateValidItems('./configs/iteminfo.json');
       } catch (error) {
         console.error('Failed to populate valid_items:', error);
       }
     }
+    await MemoryLoader.loadAllItemsIntoMemory();
+
     const categories = ["wheel_items", "shop_items", "hourly_items", "achievement_items"];
+    try {
     for (const category of categories) {
         await ConfigValidator.validateConfigFileOnStartup(category);
+    } }
+    catch (error) {
+        console.error('Failed to validate config files:', error);
     }
     
-    // Load shop and wheel items into memory for faster access, achievements might be too large....
-    const MemoryLoader = require('./services/MemoryLoader');
-    await MemoryLoader.loadItemsIntoMemory('wheel_items');
-    await MemoryLoader.loadItemsIntoMemory('shop_items')
-
-
-
-
     // Start server
     try {
     app.listen(PORT, () => {

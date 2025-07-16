@@ -2,8 +2,8 @@
 const fs = require('fs').promises;
 const path = require('path');
 const logger = require('../util/logger');
-const { CATEGORY_CONFIGS } = require('./ConfigValidator');
-
+const { CATEGORY_CONFIGS } = require('../util/categoryConfig');
+const allItemsPath = path.join(__dirname, '..', 'data', 'everyItem.json')
 class MemoryLoader {
     static items = {
         wheel_items: [],
@@ -15,17 +15,14 @@ class MemoryLoader {
     /**
      * Load all configuration items into memory
      */
-    static async loadAllItems() {
+    static async loadAllItemsIntoMemory() {
         try {
-            // Load each category of items
-            for (const category in CATEGORY_CONFIGS) {
-                await this.loadItemsIntoMemory(category);
-            }
-            logger.info('[✓] All items successfully loaded into memory');
-            return true;
-        } catch (error) {
-            logger.error(`Error loading items into memory: ${error.message}`);
-            return false;
+            const data = await fs.readFile(allItemsPath,'utf8')
+            this.allItems = JSON.parse(data);
+            return this.allItems;
+        }
+        catch (err) {
+            throw new Error("failed to load all items",err)
         }
     }
 
@@ -35,7 +32,11 @@ class MemoryLoader {
      */
     static async loadItemsIntoMemory(category) {
         try {
+            console.log("DEBUG CATEGORY:", category);
             const config = CATEGORY_CONFIGS[category];
+            console.log("DEBUG CONFIG:", config);
+            
+            
             if (!config) {
                 throw new Error(`Unknown category: ${category}`);
             }
@@ -54,7 +55,7 @@ class MemoryLoader {
             
             return this.items[config.key];
         } catch (error) {
-            logger.error(`Error loading ${category} into memory: ${error.message}`);
+            logger.error(`Error loading ${category} into memory: ${error}`);
             throw error;
         }
     }
@@ -70,6 +71,13 @@ class MemoryLoader {
             return [];
         }
         return this.items[category];
+    }
+      static getAllItems() {
+        if (!this.allItems) {
+            logger.warn(`[!] no items`);
+            return [];
+        }
+        return this.allItems
     }
     
     /**

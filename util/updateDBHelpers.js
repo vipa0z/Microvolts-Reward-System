@@ -97,8 +97,14 @@ async function populateValidItems(jsonFilePath) {
     console.error('Error populating valid_items:', err);
   }
 }
-module.exports = {
-  ensureValidItemsTableExist,
-  ensureRewardFieldsExist,
-  populateValidItems
-};
+
+exports.run = async function run() {
+    await ensureValidItemsTableExist();
+    await populateValidItems('../configs/itemInfo.json');
+    await ensureRewardFieldsExist()
+    process.exit(0);
+}
+
+
+
+

@@ -3,36 +3,32 @@ const logger = require("../util/logger");
 const fs = require("fs").promises;
 const path = require("path");
 const chalk = require("chalk");
-const CATEGORY_CONFIGS = {
-    "shop_items": { filename: "shop_items.json", key: "shop_items" },
-    "wheel_items": { filename: "wheel_items.json", key: "wheel_items" },
-    "hourly_items": { filename: "hourly_reward_items.json", key: "hourly_reward_items" },
-    "achievement_items": { filename: "achievement_items.json", key: "achievement_items" },
-};
+const { CATEGORY_CONFIGS } = require('../util/categoryConfig');
+const MemoryLoader = require('./MemoryLoader');
+
 
 // 🔍 Extract all ii_id(s) from items (handling nested arrays, objects, numbers)
 function extractItemIds(items) {
     const ids = [];
-
+// check for arrays of itemIds and unwrap them
     for (const wrapper of items) {
         const item = Array.isArray(wrapper) ? wrapper[0] : wrapper;
 
         if (!item) continue;
 
-        if (Array.isArray(item.ii_id)) {
-            ids.push(...item.ii_id);
-        } else if (typeof item.ii_id === "number") {
-            ids.push(item.ii_id);
-        } else if (typeof item.itemId === "number") {
+        if (Array.isArray(item.itemId)) {
+            ids.push(...item.itemId);
+        }
+        else if (typeof item.itemId === "number") {
             ids.push(item.itemId);
         }
     }
-
     return ids.filter(id => typeof id === "number" && !isNaN(id));
 }
 
-// ✅ Main item validator
+//  Main item validator
 async function validateItems(category, items, options = {}) {
+    const allItems = require("./MemoryLoader").getAllItems();
     const { saveIfValid = true, fromFile = false } = options;
     const config = CATEGORY_CONFIGS[category];
     if (!config) throw new Error(`Unknown category: ${category}`);
@@ -41,9 +37,9 @@ async function validateItems(category, items, options = {}) {
     if (!itemIds.length) {
         return { success: true, validItemIds: [], skipped: true };
     }
-
-    const rows = await db.query(`SELECT itemId FROM valid_items WHERE itemId IN (?)`, [itemIds]);
-    const validItemIds = rows.map(row => row.itemId);
+    // compare to ids in memory
+   
+    const validItemIds = allItems.map(row => row.itemId);
     const invalidItemIds = itemIds.filter(itemId => !validItemIds.includes(itemId));
 
     if (invalidItemIds.length > 0) {
@@ -75,8 +71,7 @@ async function validateItems(category, items, options = {}) {
     return { success: true, validItemIds };
 }
 
-// ✅ Config validator for startup
-// ✅ Config validator for startup
+
 async function validateConfigFileOnStartup(category) {
     const config = CATEGORY_CONFIGS[category];
     if (!config) throw new Error(`Unknown category: ${category}`);
@@ -114,7 +109,7 @@ async function validateConfigFileOnStartup(category) {
             }
         }
 
-        // 🔧 If missing or invalid, initialize the expected structure
+        // If missing or invalid, initialize the expected structure
         if (typeof configData !== 'object' || !configData.hasOwnProperty(config.key)) {
             logger.warn(`[!] ${config.filename} missing expected key. Initializing with empty '${config.key}' array.`);
             configData = { [config.key]: [] };
@@ -141,7 +136,8 @@ async function validateConfigFileOnStartup(category) {
         const result = await validateItems(category, items, { saveIfValid: false, fromFile: true });
 
         if (!result.success) {
-            logger.warn(`[!] Invalid item IDs in ${config.filename}: ${result.invalidItemIds.join(", ")}`);
+            logger.error(`[!] Invalid item IDs in ${config.filename}: ${result.invalidItemIds.join(", ")}`);
+            process.exit(0)
         } else {
             logger.info(`[✓] All item IDs in ${config.filename} are valid.`);
         }
