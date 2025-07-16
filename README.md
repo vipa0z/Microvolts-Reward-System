@@ -1,6 +1,6 @@
 # Microvolts OverVolt: Rewards Server
 
-A faithful recreation of the Microvolts rewards system, bringing back the functionality of  servers like Surge and THO. providing a complete recreation of the original game's reward mechanics.
+A faithful recreation of the Microvolts rewards system that restores the functionality of servers like Surge and THO. This implementation provides a complete recreation of the original game's reward mechanics.
 
 ## Compatibility
 
