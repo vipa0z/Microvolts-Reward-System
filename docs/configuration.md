@@ -22,9 +22,9 @@ Example `wheel_items.json`:
 {
     "wheel_items": [
         {
-            "ii_id": 12345, 
-            "name": "Awesome Item",
-            "duration": 30
+            "itemId": 12345, 
+            "itemName": "Awesome Item",
+            "itemOption": "Speed++"
         }
     ]
 }
@@ -35,7 +35,7 @@ response
     "success": true,
 data: {
     "message": "2 item(s) added to wheel_items and memory cache updated."
-     ii_id: [141414,242556]
+     itemId: [141414,242556]
    }
 }
 ```
