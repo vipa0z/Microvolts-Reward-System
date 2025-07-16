@@ -65,7 +65,7 @@ run with node/nodemon
 ```
 node ./server.js
 ```
-![alt text](image.png)
+
 
 ## Troubleshooting
 - Make sure your database server is running and credentials are correct in `.env`.
