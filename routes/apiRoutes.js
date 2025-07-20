@@ -16,7 +16,7 @@ const wheelController = require('../controllers/referal_wheel');
  * @access  Private
  */
 // for peasants
-router.post('/rewards/draw-wheel',auth, wheelController.drawWheel);
+router.post('/wheel/draw',auth, wheelController.drawWheel);
 
 // for admins
 router.post('/configure/wheel', auth, configController.configureItems('wheel_items'));
@@ -24,6 +24,8 @@ router.post('/configure/shop', auth, configController.configureItems('shop_items
 router.post('/configure/hourly', auth, configController.configureItems('hourly_items'));
 router.post('/configure/achievement', auth, configController.configureItems('achievement_items'));
 
+// for players/admins
+router.get('/wheel/items', auth, wheelController.getWheelItems);
 /**
  * @route   POST /api/hourly-rewards/draw
  * @desc    Claims the hourly reward for the authenticated user.

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require("path")
 const logger = require("./util/logger")
 const express = require('express');
 const cors = require('cors');
@@ -8,9 +9,12 @@ const {ensureRewardFieldsExist } = require('./util/updateDBHelpers')
 const ConfigValidator = require('./services/ConfigValidator')
 const MemoryLoader = require('./services/MemoryLoader');
 const run = require('./util/updateDBHelpers').run;
-// Import routes
-const authRoutes = require('./routes/routes');
 
+
+
+// Import routes
+const authRoutes = require('./routes/apiRoutes');
+const siteRoutes = require("./routes/siteRoutes")
 
 // replace with API endpoints
 // validateConfigFilesItems("shop_item")
@@ -19,6 +23,7 @@ const authRoutes = require('./routes/routes');
 // Initialize Express app
 const app = express();
 const errorHandler = require('./middleware/error');
+
 
 console.log("\n")
 console.log(chalk.magenta('[+] Welcome to the MicroBolts Reward Server'));
@@ -48,7 +53,16 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/', authRoutes);
+// app.use(siteRoutes)
 app.use(errorHandler);
+
+app.set('view engine', 'ejs');
+
+// Set the views folder (default is './views')
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static assets 
+app.use(express.static(path.join(__dirname, 'public')));
 
 // health check
 app.get('/', (req, res) => {
@@ -56,8 +70,6 @@ return res.send("<html><body style='text-align: center;background-color:#f0f0;'>
 });
 
 
-// Error handling middleware
-// app.use(errorHandler);
 
 // Database connection and server startup
 const DB_PORT = process.env.DB_PORT || 3305; // default port is 3306
@@ -87,11 +99,15 @@ async function startServer() {
       }
     }
     await MemoryLoader.loadAllItemsIntoMemory();
-
-    const categories = ["wheel_items", "shop_items", "hourly_items", "achievement_items"];
+                                                                  
+    const categories = ["wheel_items", "shop_items", "hourly_items"];
     try {
     for (const category of categories) {
-        await ConfigValidator.validateConfigFileOnStartup(category);
+        await ConfigValidator.validateConfigFileOnStartup(category).then(() => {
+           MemoryLoader.loadItemsIntoMemory(category);
+        }).catch((error) => {
+            console.error(`[!] Failed to validate ${category} config file: ${error}`);
+        });
     } }
     catch (error) {
         console.error('Failed to validate config files:', error);

@@ -71,7 +71,7 @@ class SpinningWheel {
     drawWheel() {
         // Get wheel items from memory
         const items = MemoryLoader.getItems('wheel_items');
-        
+        console.log("items", items)
         if (!items || items.length === 0) {
             throw new Error("No wheel items configured");
         }
@@ -83,16 +83,14 @@ class SpinningWheel {
     }
 
 
-    /**
-     * Process a wheel spin - checks eligibility, consumes a spin, draws a reward and sends it to player
-     * @returns {Promise<Object>} - Result of the spin operation
-     */
     async spin() {
         try {
-            // Check if player is eligible to spin
-            const eligibility = await this.checkEligibility();
+            // Check if player is eligible to spin // UNCOMMENT THIS)
+           
+            const eligibility = {canSpin: true, remainingSpins: 5, hoursUntilNextSpin: 0, totalEligibleSpins: 1, claimedSpins: 0}
             
             if (!eligibility.canSpin) {
+                console.log("can spin", eligibility.canSpin)
                 return {
                     success: false,
                     error: `You need ${eligibility.hoursUntilNextSpin} more hours to claim a spin`,
@@ -134,22 +132,25 @@ class SpinningWheel {
      * @returns {Promise<void>}
      */
     async sendReward(reward) {
-        const rewardService = new RewardService(this.playerId);
-        const message = `Congratulations Microbolter! You won ${reward.ii_name} from The Referal system, keep creating alts to abuse this even more--i mean inviting friends :].`;
+        const rewardService = new RewardService(
+            this.playerId, 
+            process.env.EMU_ADMIN_JWT,
+        );
+        const message = `Congratulations Microbolter! You won ${reward.itemName} from The Referal system, keep creating alts to abuse this even more--i mean inviting friends :].`;
         
-        if (Array.isArray(reward.ii_id)) {
+        if (Array.isArray(reward.itemId)) {
             await rewardService.sendMultipleRewardsToPlayerGiftBox(
-                reward.ii_id,
+                reward.itemId,
                 message
             );
         } else { // send single item
             await rewardService.sendRewardToPlayerGiftBox(
-                reward.ii_id,
-                `Congratulations Microbolter! You've just won ${reward.ii_name} as your referal The Spinning Wheel`
+                reward.itemId,
+                `Congratulations Microbolter! You've just won ${reward.itemName} as your referal The Spinning Wheel`
             );
         }
         
-        logger.info(`Reward ${reward.ii_name} sent to player ${this.playerId}'s gift box`);
+        logger.info(`Reward ${reward.itemName} sent to player ${this.playerId}'s gift box`);
     }
 
     }

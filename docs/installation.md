@@ -35,8 +35,8 @@ Copy the example environment file and edit it as needed:
 ```
 cp .env.example .env
 ```
-
 Edit `.env` to match your database credentials and desired settings. See the [Environment Variables](./environment-variables.md) documentation for details.
+
 
 ## 4. Configure the Database
 
@@ -48,6 +48,7 @@ node server.js --populate
 
 See the [Database Setup](./database-setup.md) guide for more details.
 
+
 ## 5. Run the Server
 
 To start the server:
@@ -55,33 +56,24 @@ To start the server:
 ```
 node server.js
 ```
-
 or
-
 ```
 npm start
 ```
 
 For development with automatic restarts on file changes:
 
-run with nodemon
-
+run with node/nodemon
 ```
-npm i nodemon -g
-```
-
-```
-nodemon ./server.js
+node ./server.js
 ```
 
 ## Troubleshooting
-
 - Make sure your database server is running and credentials are correct in `.env`.
 - If you encounter missing module errors, re-run `npm install`.
 - For more help, see the [Configuration](./configuration.md) and [Environment Variables](./environment-variables.md) docs.
 
 ---
-
-[Next: API Routes -&gt;](https://github.com/vipa0z/Microvolts-Reward-System/blob/main/docs/API%20Routes.md)
-
-[Docs Home &lt;-](./index.md)
+[Next: API Routes ->](https://github.com/vipa0z/Microvolts-Reward-System/blob/main/docs/API%20Routes.md)
+ 
+[Docs Home <-](./index.md)

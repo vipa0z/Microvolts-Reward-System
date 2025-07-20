@@ -32,9 +32,7 @@ class MemoryLoader {
      */
     static async loadItemsIntoMemory(category) {
         try {
-            console.log("DEBUG CATEGORY:", category);
             const config = CATEGORY_CONFIGS[category];
-            console.log("DEBUG CONFIG:", config);
             
             
             if (!config) {

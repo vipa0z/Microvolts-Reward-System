@@ -1,3 +1,48 @@
 {
-    "achievement_items": []
+  "LEAST REDUNDANT ACHIEVEMENTS CODE :)": {
+    "achievements": {
+      "only_up": [
+        {
+          "name": "only_up_1",
+          "description": "Reach level 20",
+          "itemId": 12345,
+          "itemOption": "Speed++"
+        },
+        {
+          "name": "only_up_2",
+          "description": "Reach level 30",
+          "itemId": [
+            12345,
+            2141413
+          ],
+          "itemName": [
+            "5000 MP",
+            "5 Coupons"
+          ],
+          "itemOption": "Speed++"
+        }
+      ],
+      "kill_master": [
+        {
+          "name": "kill_master_1",
+          "description": "kill 1000 players",
+          "itemId": 12345,
+          "itemOption": "Speed++"
+        },
+        {
+          "name": "Master Kill 2",
+          "description": "kill 5000 players",
+          "itemId": [
+            12345,
+            2141413
+          ],
+          "itemName": [
+            "5000 MP",
+            "5 Coupons"
+          ],
+          "itemOption": "Speed++"
+        }
+      ]
+    }
   }
+}
