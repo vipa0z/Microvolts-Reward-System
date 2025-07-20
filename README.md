@@ -1,5 +1,8 @@
 # Microvolts OverVolt: Rewards Server
 
+> **Note:** Development will be on hold temporarily as im preparing for the CPTS exam. Regular development will resume after the exam period. Thank you for your understanding!
+
+
 A faithful recreation of the Microvolts rewards system that restores the functionality of servers like Surge and THO. This implementation provides a complete recreation of the original game's reward mechanics.
 
 ## Compatibility
@@ -14,7 +17,7 @@ This project is currently under active development. The initial feature, the **R
 
 The long-term vision for this project is to implement the following features:
 
-- **Referral Wheel** (✅ Implemented - **GUI**  In-Progress)
+- **Referral Wheel** (✅ Implemented, but integration with The EMU API is not yet complete)
 - **Event Shop** (🔜 Planned)
 - **Achievements** (🔜 Planned)
 - **Hourly Play Time Rewards** (🔜 Planned)
