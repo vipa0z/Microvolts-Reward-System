@@ -6,11 +6,13 @@ This document describes the available API routes defined in the `routes` folder.
 
 ---
 
-## 1. POST `/api/rewards/draw-wheel`
+## 1. POST `/api/wheel/draw`
+
 - **Description:** Performs a wheel draw for the authenticated user.
 - **Access:** Private (requires authentication)
 
 ### Example Request
+
 ```
 POST /api/rewards/draw-wheel
 Authorization: Bearer <token>
@@ -18,6 +20,7 @@ Authorization: Bearer <token>
 ```
 
 ### Example Response
+
 ```
 {
     "success": true,
@@ -31,10 +34,12 @@ Authorization: Bearer <token>
 ---
 
 ## 2. POST `/api/configure/{category}`
+
 - **Description:** Configure the items available for the specified category (admin only).
 - **Access:** Private (requires authentication)
 
 ### Example Request
+
 ```
 POST /api/configure/wheel
 Authorization: Bearer <admin_token>
@@ -59,6 +64,7 @@ Content-Type: application/json
 ```
 
 ### Example Response (200)
+
 ```
 {
   "success": true,
@@ -67,6 +73,7 @@ Content-Type: application/json
 ```
 
 ### Example Response (400)
+
 ```
 {
     "success": false,
@@ -99,3 +106,4 @@ Content-Type: application/json
 ---
 
 [Docs Home](./index.md)
+```
