@@ -22,7 +22,7 @@ const siteRoutes = require("./routes/siteRoutes")
 // validateConfigFilesItems("achievement_item")
 // Initialize Express app
 const app = express();
-const errorHandler = require('./middleware/error');
+const errorHandler = require('./middlewares/error');
 
 
 console.log("\n")

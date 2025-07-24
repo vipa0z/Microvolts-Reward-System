@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
 
-
 function adminAuthMiddleware(req, res, next) {
   const authHeader = req.headers['authorization'];
 

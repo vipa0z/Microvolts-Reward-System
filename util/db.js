@@ -23,7 +23,6 @@ const chalk = require('chalk');
         return res;
       } catch (err) {
         console.error(chalk.red('❌ Database query failed:', err));
-        throw err;
       } finally {
         if (conn) conn.release();
       }
